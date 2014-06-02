@@ -12,14 +12,18 @@ use Data::Dumper;
     use DBI;
     my $dbh = DBI->connect(...);
 
-    # you can call it like chain
+You can call it like chain
+
     my $query = SQLBuilder->SELECT('col1, col2')->FROM('table1')->WHERE('col1 = ?', $val1);
 
-    # you can also call it individually, the statement order doesn't matter
+You can also call it individually, the statement order doesn't matter
+
     my $query = SQLBuilder->SELECT->FROM('table');
     $query->LIMIT(100);
     $query->WHERE('col2 = ?', $val2);
     $query->JOIN('LEFT JOIN table2 ON (...)');
+
+Finally, call build to get SQL and bind vars
 
     my ($sql, $bind_vars) = $query->build();
     my $data = $dbh->selectall_arrayref($sql, @$bind_vars);
@@ -49,17 +53,18 @@ use Data::Dumper;
     $sb->ORDERBY('t3.c1');
     $sb->GROUPBY('t3.c1');
 
-    # SQL:
-    #    SELECT t1.c1, t2.c1 FROM table t1, table2 t2
-    #    LEFT JOIN table t3 ON (t2.c1 = t3.c1) AND (t3.c1 = ?)
-    #    WHERE
-    #        t1.c1 = ? AND t2.c1 = ?
-    #    GROUP BY
-    #        t3.c1
-    #    ORDER BY
-    #        t3.c1, t1.c1 DESC
-    #    LIMIT 10
-    # bind_vars: [ 'v3', 'v1', 'v2' ];
+    build() result: 
+    SQL:
+       SELECT t1.c1, t2.c1 FROM table t1, table2 t2
+       LEFT JOIN table t3 ON (t2.c1 = t3.c1) AND (t3.c1 = ?)
+       WHERE
+           t1.c1 = ? AND t2.c1 = ?
+       GROUP BY
+           t3.c1
+       ORDER BY
+           t3.c1, t1.c1 DESC
+       LIMIT 10
+    bind_vars: [ 'v3', 'v1', 'v2' ];
     
 =cut
 
